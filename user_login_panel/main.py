@@ -1,5 +1,5 @@
 import streamlit as st
-from controllers.user_controller import UserController
+from user_login_panel.controllers.user_controller import UserController
 
 def main():
     user_controller = UserController()

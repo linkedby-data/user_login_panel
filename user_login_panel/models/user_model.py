@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import declarative_base, sessionmaker
 import hashlib
 import re
-from config.database import get_db_url
+from user_login_panel.config.database import get_db_url
 
 Base = declarative_base()
 
