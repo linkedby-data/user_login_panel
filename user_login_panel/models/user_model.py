@@ -69,7 +69,84 @@ class UserModel:
             return True  # Usuário cadastrado com sucesso
         finally:
             session.close()
+    '''
+    def update_user(self, email, updated_data):
+        session = self.Session()
+        
+        try:
+            st.write(updated_data)
+            st.write(f"Updating user: {email}")
+            
+            # Monta a query de UPDATE diretamente
+            update_query = (
+                session.query(User)
+                .filter_by(email=email)
+                .update({
+                    User.name: updated_data.get("new_name"),
+                    User.enterprise: updated_data.get("new_enterprise"),
+                    User.position: updated_data.get("new_position"),
+                    User.permition: updated_data.get("new_permition"),
+                    User.exception: updated_data.get("new_exception"),
+                    User.autorization: updated_data.get("new_autorization"),
+                    User.password: self.hash_password(updated_data["password"]) if "password" in updated_data else None
+                }, synchronize_session=False)
+            )
+            
+            if update_query:
+                session.commit()
+                st.write("User updated successfully")
+                return True
+            
+            st.write(f"User with email {email} not found.")
+            return False
+        except Exception as e:
+            st.write(f"Error updating user: {e}")
+            session.rollback()
+            return False
+        finally:
+            session.close()
+    '''
+    '''
+    def update_user(self, email, updated_data):
+        session = self.Session()
+        
+        try:
+            # Verifica se o usuário existe
+            user_exists = session.query(User).filter_by(email=email).first()
+            
+            if user_exists:
+                # Cria um dicionário com os dados a serem atualizados
+                update_fields = {
+                    "name": updated_data.get("name", user_exists.name),
+                    "enterprise": updated_data.get("enterprise", user_exists.enterprise),
+                    "position": updated_data.get("position", user_exists.position),
+                    "permition": updated_data.get("permition", user_exists.permition),
+                    "exception": updated_data.get("exception", user_exists.exception),
+                    "autorization": updated_data.get("autorization", user_exists.autorization),
+                }
+                
+                # Verifica se a senha está sendo atualizada
+                if "password" in updated_data:
+                    update_fields["password"] = self.hash_password(updated_data["password"])
 
+                # Executa a atualização no banco
+                session.query(User).filter_by(email=email).update(update_fields)
+
+                # Faz o commit para persistir as alterações
+                session.commit()
+                return True
+            else:
+                st.write(f"User with email {email} not found.")
+                return False
+        except Exception as e:
+            st.write(f"Error updating user: {e}")
+            session.rollback()
+            return False
+        finally:
+            session.close()
+    '''
+
+    '''
     def update_user(self, email, updated_data):
         session = self.Session()
         
@@ -77,6 +154,9 @@ class UserModel:
             user = session.query(User).filter_by(email=email).first()
             
             if user:
+                st.write(f"Updating user: {email} with data: {updated_data}")
+                st.write(f"Session is active: {session.is_active}")  # Verifique se a sessão está ativa
+
                 user.name = updated_data.get("name", user.name)
                 user.enterprise = updated_data.get("enterprise", user.enterprise)
                 user.position = updated_data.get("position", user.position)
@@ -87,12 +167,82 @@ class UserModel:
                 if "password" in updated_data:
                     user.password = self.hash_password(updated_data["password"])
                 
+                session.commit()
+                st.write("Commit executed")  # Confirme o commit
+
+                session.refresh(user)  # Garante que as alterações sejam visíveis na sessão
+                st.write(f"Updated user: {user}")  # Mostra os dados atualizados
+                return True
+            
+            st.write(f"User with email {email} not found.")
+            return False
+        except Exception as e:
+            st.write(f"Error updating user: {e}")
+            session.rollback()
+            return False
+        finally:
+            session.close()
+    '''
+
+    '''
+    def update_user(self, email, updated_data):
+        session = self.Session()
+        
+        try:
+            user = session.query(User).filter_by(email=email).first()
+            
+            if user:
+                st.write(f"Updating user: {email} with data: {updated_data}")  # Adicione logs para inspecionar os dados
+                user.name = updated_data.get("name", user.name)
+                user.enterprise = updated_data.get("enterprise", user.enterprise)
+                user.position = updated_data.get("position", user.position)
+                user.permition = updated_data.get("permition", user.permition)
+                user.exception = updated_data.get("exception", user.exception)
+                user.autorization = updated_data.get("autorization", user.autorization)
+                
+                if "password" in updated_data:
+                    user.password = self.hash_password(updated_data["password"])
+                
+                session.commit()
+                session.refresh(user)  # Garante que a sessão está atualizada após o commit
+                st.write("User updated successfully.")  # Log de sucesso
+                return True
+            
+            st.write(f"User with email {email} not found.")  # Log de falha
+            return False
+        except Exception as e:
+            st.write(f"Error updating user: {e}")  # Adiciona logging de erro
+            session.rollback()  # Reverte alterações em caso de erro
+            return False
+        finally:
+            session.close()
+    '''
+    
+    
+    def update_user(self, email, updated_data):
+        session = self.Session()
+        
+        try:
+            user = session.query(User).filter_by(email=email).first()
+            
+            if user:
+                user.name = updated_data.get("new_name", user.name)
+                user.enterprise = updated_data.get("new_enterprise", user.enterprise)
+                user.position = updated_data.get("new_position", user.position)
+                user.permition = updated_data.get("new_permition", user.permition)
+                user.exception = updated_data.get("new_exception", user.exception)
+                user.autorization = updated_data.get("autorization_code", user.autorization)
+                
+                if "new_password" in updated_data:
+                    user.password = self.hash_password(updated_data["new_password"])
+                
                 session.commit()                
                 return True
             
             return False
         finally:
             session.close()
+    
 
     def delete_user(self, email):
         session = self.Session()

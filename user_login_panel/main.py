@@ -1,4 +1,10 @@
+import sys
+import os
 import streamlit as st
+
+# Adicionando o caminho do diretório do projeto ao sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from user_login_panel.controllers.user_controller import UserController
 
 def main():
