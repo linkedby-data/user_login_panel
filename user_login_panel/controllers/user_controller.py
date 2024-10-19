@@ -1,6 +1,6 @@
 import streamlit as st
-from models.user_model import UserModel
-from views.user_view import UserViewHelper, UserViewRegisterAndLogin, UserViewSidebar 
+from user_login_panel.models.user_model import UserModel
+from user_login_panel.views.user_view import UserViewHelper, UserViewRegisterAndLogin, UserViewSidebar 
 
 class UserController:
     permition = None
