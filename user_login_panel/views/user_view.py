@@ -64,7 +64,7 @@ class UserViewRegisterAndLogin:
         new_name = st.text_input("Nome", key="username")
         new_enterprise = st.text_input("Empresa", key="user_enterprise")
         new_position = st.text_input("Cargo", key="user_position")
-        new_permition = st.text_input("Permissão", key="user_permition")
+        new_permission = st.text_input("Permissão", key="user_permission")
         new_exception = st.text_input("Exceção", key="user_exception")
         autorization_code = st.text_input("Código de Autorização", type="password", key="register_code")
         new_password = st.text_input("Nova Senha", type="password", key="register_pass")
@@ -75,7 +75,7 @@ class UserViewRegisterAndLogin:
             "new_name": new_name,
             "new_enterprise": new_enterprise,
             "new_position": new_position,
-            "new_permition": new_permition,
+            "new_permission": new_permission,
             "new_exception": new_exception,
             "autorization_code": autorization_code,
             "new_password": new_password,

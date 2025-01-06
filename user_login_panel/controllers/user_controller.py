@@ -3,7 +3,7 @@ from user_login_panel.models.user_model import UserModel
 from user_login_panel.views.user_view import UserViewHelper, UserViewRegisterAndLogin, UserViewSidebar 
 
 class UserController:
-    permition = None
+    permission = None
     exception = None
     
     def __init__(self):
@@ -19,12 +19,12 @@ class UserController:
         return st.session_state.logged_in
 
     @classmethod
-    def set_permition(cls, permition):
-        cls.permition = permition
+    def set_permission(cls, permission):
+        cls.permission = permission
     
     @classmethod
-    def get_permition(cls):
-        return cls.permition
+    def get_permission(cls):
+        return cls.permission
     
     @classmethod
     def set_exception(cls, exception):
@@ -46,7 +46,7 @@ class UserController:
                 if user:                
                     self.set_logged_in(True)
                     self.view_sidebar.set_user(user.name)
-                    self.set_permition(user.permition)
+                    self.set_permission(user.permission)
                     self.set_exception(user.exception)
                     self.view_helper.set_page("protected", True)
                 else:    

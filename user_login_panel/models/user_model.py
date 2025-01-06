@@ -14,7 +14,7 @@ class User(Base):
     name = Column(String, nullable=False)
     enterprise = Column(String, nullable=False)
     position = Column(String, nullable=False)
-    permition = Column(String, nullable=False)
+    permission = Column(String, nullable=False)
     exception = Column(String, nullable=False)
     autorization = Column(String, nullable=False)
     password = Column(String, nullable=False)
@@ -58,7 +58,7 @@ class UserModel:
                 name=inserted_data["new_name"],
                 enterprise=inserted_data["new_enterprise"],
                 position=inserted_data["new_position"],
-                permition=inserted_data["new_permition"],
+                permission=inserted_data["new_permission"],
                 exception=inserted_data["new_exception"],
                 autorization=inserted_data["autorization_code"],
                 password=hashed_password
@@ -85,7 +85,7 @@ class UserModel:
                     User.name: updated_data.get("new_name"),
                     User.enterprise: updated_data.get("new_enterprise"),
                     User.position: updated_data.get("new_position"),
-                    User.permition: updated_data.get("new_permition"),
+                    User.permission: updated_data.get("new_permission"),
                     User.exception: updated_data.get("new_exception"),
                     User.autorization: updated_data.get("new_autorization"),
                     User.password: self.hash_password(updated_data["password"]) if "password" in updated_data else None
@@ -120,7 +120,7 @@ class UserModel:
                     "name": updated_data.get("name", user_exists.name),
                     "enterprise": updated_data.get("enterprise", user_exists.enterprise),
                     "position": updated_data.get("position", user_exists.position),
-                    "permition": updated_data.get("permition", user_exists.permition),
+                    "permission": updated_data.get("permission", user_exists.permission),
                     "exception": updated_data.get("exception", user_exists.exception),
                     "autorization": updated_data.get("autorization", user_exists.autorization),
                 }
@@ -160,7 +160,7 @@ class UserModel:
                 user.name = updated_data.get("name", user.name)
                 user.enterprise = updated_data.get("enterprise", user.enterprise)
                 user.position = updated_data.get("position", user.position)
-                user.permition = updated_data.get("permition", user.permition)
+                user.permission = updated_data.get("permission", user.permission)
                 user.exception = updated_data.get("exception", user.exception)
                 user.autorization = updated_data.get("autorization", user.autorization)
                 
@@ -196,7 +196,7 @@ class UserModel:
                 user.name = updated_data.get("name", user.name)
                 user.enterprise = updated_data.get("enterprise", user.enterprise)
                 user.position = updated_data.get("position", user.position)
-                user.permition = updated_data.get("permition", user.permition)
+                user.permission = updated_data.get("permission", user.permission)
                 user.exception = updated_data.get("exception", user.exception)
                 user.autorization = updated_data.get("autorization", user.autorization)
                 
@@ -229,7 +229,7 @@ class UserModel:
                 user.name = updated_data.get("new_name", user.name)
                 user.enterprise = updated_data.get("new_enterprise", user.enterprise)
                 user.position = updated_data.get("new_position", user.position)
-                user.permition = updated_data.get("new_permition", user.permition)
+                user.permission = updated_data.get("new_permission", user.permission)
                 user.exception = updated_data.get("new_exception", user.exception)
                 user.autorization = updated_data.get("autorization_code", user.autorization)
                 

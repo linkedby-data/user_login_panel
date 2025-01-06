@@ -19,7 +19,7 @@ def main():
             st.write(f"Data Inicial: {user_view.get_start_date()}")
             st.write(f"Data Final: {user_view.get_end_date()}")
         
-        st.write(user_controller.get_permition())
+        st.write(user_controller.get_permission())
         st.write(user_controller.get_exception())
         
 # Execução do programa
