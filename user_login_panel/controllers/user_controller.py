@@ -1,10 +1,12 @@
 import streamlit as st
 from user_login_panel.models.user_model import UserModel
 from user_login_panel.views.user_view import UserViewHelper, UserViewRegisterAndLogin, UserViewSidebar 
+from user_login_panel.utils.session_manager import SessionManager
 
 class UserController:
-    permission = None
-    exception = None
+    # Variáveis de classe para armazenar permissões e exceções
+    _permissions: dict = {}
+    _exceptions: dict = {}
     
     def __init__(self):
         self.model = UserModel()
@@ -13,26 +15,26 @@ class UserController:
         self.view_sidebar = UserViewSidebar()
     
     def set_logged_in(self, logged=False):
-        st.session_state.logged_in = logged
+        SessionManager.set_session_state("logged_in", logged)
 
     def get_logged_in(self):
-        return st.session_state.logged_in
+        return SessionManager.get_session_state("logged_in", False)
 
-    @classmethod
-    def set_permission(cls, permission):
-        cls.permission = permission
+    def set_permission(self, permission):
+        session_id = SessionManager.get_session_id()
+        self._permissions[session_id] = permission
     
-    @classmethod
-    def get_permission(cls):
-        return cls.permission
+    def get_permission(self):
+        session_id = SessionManager.get_session_id()
+        return self._permissions.get(session_id)
     
-    @classmethod
-    def set_exception(cls, exception):
-        cls.exception = exception
+    def set_exception(self, exception):
+        session_id = SessionManager.get_session_id()
+        self._exceptions[session_id] = exception
     
-    @classmethod
-    def get_exception(cls):
-        return cls.exception
+    def get_exception(self):
+        session_id = SessionManager.get_session_id()
+        return self._exceptions.get(session_id)
     
     def handle_login(self):
         email, password = self.view_register_login.login_form()
@@ -94,20 +96,18 @@ class UserController:
             self.handle_register()
     
     def handle_main_page(self):
-        st.set_page_config(page_title=st.secrets.MISCELLANEOUS.title, layout="wide")        
-        
         self.view_helper.set_logo(st.secrets.MISCELLANEOUS.logo)
         self.view_helper.set_title(st.secrets.MISCELLANEOUS.title)
                     
         if "current_page" not in st.session_state:
-            self.view_helper.set_page("login")
+            st.session_state.current_page = "login"
 
-        if "logged_in" not in st.session_state:
+        if not self.get_logged_in():
             self.set_logged_in(False)
 
-        if self.view_helper.get_page() == "login":
+        if st.session_state.current_page == "login":
             self.handle_tabs()
-        elif self.view_helper.get_page() == "protected":
+        elif st.session_state.current_page == "protected":
             if self.get_logged_in():                
                 self.view_sidebar.display()
 

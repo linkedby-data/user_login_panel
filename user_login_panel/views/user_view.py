@@ -1,18 +1,19 @@
 import streamlit as st
 from datetime import datetime
+from user_login_panel.utils.session_manager import SessionManager
 
 class UserViewHelper:
     def __init__(self):
         # Verifica se a chave 'current_page' existe no session_state, caso contrário, cria.
         if "current_page" not in st.session_state:
-            self.set_page("login")
+            st.session_state.current_page = "login"
     
     def set_logo(self, image_path):
         """
         Define o logotipo no aplicativo Streamlit.
         :param image_path: Caminho da imagem do logotipo.
         """
-        st.logo(image_path)  # Corrigido para st.image (não existe st.logo)
+        st.image(image_path)
     
     def set_title(self, title):
         """
@@ -42,12 +43,13 @@ class UserViewHelper:
         :param page: O nome ou identificador da página.
         """
         st.session_state.current_page = page
+        SessionManager.set_session_state("current_page", page)
         
         if refresh:
             st.rerun()  # Atualiza a página
 
     def get_page(self):
-        return st.session_state.current_page       
+        return st.session_state.current_page
 
 class UserViewRegisterAndLogin:
     def login_page(self):
@@ -55,20 +57,22 @@ class UserViewRegisterAndLogin:
         return st.tabs(["Login", "Cadastrar"])
 
     def login_form(self):
-        email = st.text_input("Email", key="login_user")
-        password = st.text_input("Senha", type="password", key="login_pass")
+        session_id = SessionManager.get_session_id()
+        email = st.text_input("Email", key=f"{session_id}_login_user")
+        password = st.text_input("Senha", type="password", key=f"{session_id}_login_pass")
         return email, password
 
     def register_form(self):
-        new_email = st.text_input("Novo Email", key="register_user")
-        new_name = st.text_input("Nome", key="username")
-        new_enterprise = st.text_input("Empresa", key="user_enterprise")
-        new_position = st.text_input("Cargo", key="user_position")
-        new_permission = st.text_input("Permissão", key="user_permission")
-        new_exception = st.text_input("Exceção", key="user_exception")
-        autorization_code = st.text_input("Código de Autorização", type="password", key="register_code")
-        new_password = st.text_input("Nova Senha", type="password", key="register_pass")
-        confirm_password = st.text_input("Confirme a Senha", type="password", key="confirm_pass")
+        session_id = SessionManager.get_session_id()
+        new_email = st.text_input("Novo Email", key=f"{session_id}_register_user")
+        new_name = st.text_input("Nome", key=f"{session_id}_username")
+        new_enterprise = st.text_input("Empresa", key=f"{session_id}_user_enterprise")
+        new_position = st.text_input("Cargo", key=f"{session_id}_user_position")
+        new_permission = st.text_input("Permissão", key=f"{session_id}_user_permission")
+        new_exception = st.text_input("Exceção", key=f"{session_id}_user_exception")
+        autorization_code = st.text_input("Código de Autorização", type="password", key=f"{session_id}_register_code")
+        new_password = st.text_input("Nova Senha", type="password", key=f"{session_id}_register_pass")
+        confirm_password = st.text_input("Confirme a Senha", type="password", key=f"{session_id}_confirm_pass")
 
         return {
             "new_email": new_email,
@@ -83,21 +87,22 @@ class UserViewRegisterAndLogin:
         }
 
     def display_action_buttons(self):
+        session_id = SessionManager.get_session_id()
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            register_button = st.button("Cadastrar", key="register_button", use_container_width=True)
+            register_button = st.button("Cadastrar", key=f"{session_id}_register_button", use_container_width=True)
         
         with col2:
-            update_button = st.button("Alterar", key="update_button", use_container_width=True)
+            update_button = st.button("Alterar", key=f"{session_id}_update_button", use_container_width=True)
         
         with col3:
-            delete_button = st.button("Excluir", key="delete_button", use_container_width=True)
+            delete_button = st.button("Excluir", key=f"{session_id}_delete_button", use_container_width=True)
 
         return register_button, update_button, delete_button
 
 class UserViewSidebar:
-    user = None
+    _users: dict = {}
     
     def __init__(self):
         self.sidebar = st.sidebar
@@ -106,13 +111,13 @@ class UserViewSidebar:
         self.start_date = None
         self.end_date = None
 
-    @classmethod
-    def set_user(cls, user):
-        cls.user = user
+    def set_user(self, user):
+        session_id = SessionManager.get_session_id()
+        self._users[session_id] = user
     
-    @classmethod
-    def get_user(cls):
-        return cls.user
+    def get_user(self):
+        session_id = SessionManager.get_session_id()
+        return self._users.get(session_id)
     
     def display(self):
         with self.sidebar:
@@ -121,17 +126,18 @@ class UserViewSidebar:
             col1, col2 = st.columns(2)
         
             with col1:
-                self.refresh_button = st.button("Atualizar", key="refresh_button", use_container_width=True)
+                self.refresh_button = st.button("Atualizar", key=f"{SessionManager.get_session_id()}_refresh_button", use_container_width=True)
             
             with col2:
-                self.logout_button = st.button("Logout", key="logout_button", use_container_width=True)
+                self.logout_button = st.button("Logout", key=f"{SessionManager.get_session_id()}_logout_button", use_container_width=True)
 
             self.start_date = self.sidebar.date_input(
                 "Data Inicial",
                 value=datetime.now(),
                 min_value=datetime(2024, 1, 1),
                 max_value=datetime(2050, 12, 31),
-                format="DD/MM/YYYY"
+                format="DD/MM/YYYY",
+                key=f"{SessionManager.get_session_id()}_start_date"
             )
 
             self.end_date = self.sidebar.date_input(
@@ -139,7 +145,8 @@ class UserViewSidebar:
                 value=datetime.now(),
                 min_value=self.start_date,
                 max_value=datetime(2030, 12, 31),
-                format="DD/MM/YYYY"
+                format="DD/MM/YYYY",
+                key=f"{SessionManager.get_session_id()}_end_date"
             )
     
     def get_sidebar(self):
